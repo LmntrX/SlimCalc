@@ -1,24 +1,31 @@
 package com.lmntrx.slimcalc;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.PersistableBundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -26,19 +33,24 @@ public class MainActivity extends AppCompatActivity {
     TextView Display, display_op;
     String operator = "", lastPress = "", op = "";
     double a = 0;
-    boolean memoryCleared = false, longClickA = false, longClickB = false, longClickBack = false, negativeInitiated, isVibrationOn, isThemeDark;
+    boolean corrected = false, fromMemory = false, memoryCleared = false, longClickA = false, longClickB = false, longClickBack = false, negativeInitiated, isVibrationOn, isThemeDark;
     Context con;
     MenuItem about;
     Vibrator mVibrator;
     SettingsActivity settings;
     Toast toast;
-    static String realresult=null;
+    static String realResult = null;
+    NumberFormat numberFormat = new DecimalFormat("#.########");
+
+    SharedPreferences sp;
+
+    boolean firstStart = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         settings = new SettingsActivity();
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
         isVibrationOn = sp.getBoolean("VIBRATE_CHECKBOX", true);
         isThemeDark = sp.getBoolean("THEME_CHECKBOX", true);
         if (isThemeDark) {
@@ -50,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
         mVibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
-        toast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
+        toast = Toast.makeText(this,"", Toast.LENGTH_SHORT);
 
         btn1 = (Button) findViewById(R.id.btn1);
         btn2 = (Button) findViewById(R.id.btn2);
@@ -83,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
             Display.setText(savedInstanceState.getString("PREVIOUS_VALUE"));
             display_op.setText(savedInstanceState.getString("OPERATOR"));
             a = savedInstanceState.getDouble("PREVIOUS_RESULT");
+            A = savedInstanceState.getDouble("MEMORY_A");
+            B = savedInstanceState.getDouble("MEMORY_B");
 
 
         }
@@ -292,7 +306,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void add(View v) {
         op = "+";
-        if ((Display.getText() + "").equals("") || (Display.getText() + "").equals(".")) {
+        String disp = Display.getText().toString();
+        if (disp.contains("x10^")) {
+            disp = disp.replace("x10^", "E");
+        }
+        if ((Display.getText() + "").equals("") || (Display.getText() + "").equals(".") || disp.equals("∞")) {
             ;
         } else if (lastPress == "+" || lastPress == "-" || lastPress == "*" || lastPress == "/") {
             switch (op) {
@@ -316,42 +334,27 @@ public class MainActivity extends AppCompatActivity {
             vibrate(25);
         } else {
             if (operator.equals("+")) {
-                if (realresult != null)
-                    a += round((realresult), 12);
-                else
-                a += Double.parseDouble(Display.getText() + "");
+                a += Double.parseDouble(disp);
                 operator = "+";
                 lastPress = "+";
 
             } else if (operator.equals("-")) {
-                if (realresult != null)
-                    a -= round((realresult), 12);
-                else
-                a -= Double.parseDouble(Display.getText() + "");
+                a -= Double.parseDouble(disp);
                 operator = "+";
                 lastPress = "+";
 
             } else if (operator.equals("*")) {
-                if (realresult != null)
-                    a *= round((realresult), 12);
-                else
-                a *= Double.parseDouble(Display.getText() + "");
+                a *= Double.parseDouble(disp);
                 operator = "+";
                 lastPress = "+";
 
             } else if (operator.equals("/")) {
-                if (realresult != null)
-                    a /= round((realresult), 12);
-                else
-                a /= Double.parseDouble(Display.getText() + "");
+                a /= Double.parseDouble(disp);
                 operator = "+";
                 lastPress = "+";
 
             } else {
-                if (realresult != null)
-                    a = round((realresult), 12);
-                else
-                a = Double.parseDouble(Display.getText() + "");
+                a = Double.parseDouble(disp);
                 operator = "+";
                 lastPress = "+";
 
@@ -369,7 +372,11 @@ public class MainActivity extends AppCompatActivity {
             lastPress = "-";
         } else {
             op = "-";
-            if ((Display.getText() + "").equals("") || (Display.getText() + "").equals(".")) {
+            String disp = Display.getText().toString();
+            if (disp.contains("x10^")) {
+                disp = disp.replace("x10^", "E");
+            }
+            if ((Display.getText() + "").equals("") || (Display.getText() + "").equals(".") || disp.equals("∞")) {
                 ;
             } else if (lastPress == "+" || lastPress == "-" || lastPress == "*" || lastPress == "/") {
                 switch (op) {
@@ -393,42 +400,27 @@ public class MainActivity extends AppCompatActivity {
                 vibrate(25);
             } else {
                 if (operator.equals("+")) {
-                    if (realresult != null)
-                        a += round((realresult), 12);
-                    else
-                    a += Double.parseDouble(Display.getText() + "");
+                    a += Double.parseDouble(disp);
                     operator = "-";
                     lastPress = "-";
 
                 } else if (operator.equals("-")) {
-                    if (realresult != null)
-                        a -= round((realresult), 12);
-                    else
-                    a -= Double.parseDouble(Display.getText() + "");
+                    a -= Double.parseDouble(disp);
                     operator = "-";
                     lastPress = "-";
 
                 } else if (operator.equals("*")) {
-                    if (realresult != null)
-                        a *= round((realresult), 12);
-                    else
-                    a *= Double.parseDouble(Display.getText() + "");
+                    a *= Double.parseDouble(disp);
                     operator = "-";
                     lastPress = "-";
 
                 } else if (operator.equals("/")) {
-                    if (realresult != null)
-                        a /= round((realresult), 12);
-                    else
-                    a /= Double.parseDouble(Display.getText() + "");
+                    a /= Double.parseDouble(disp);
                     operator = "-";
                     lastPress = "-";
 
                 } else {
-                    if (realresult != null)
-                        a = round((realresult), 12);
-                    else
-                    a = Double.parseDouble(Display.getText() + "");
+                    a = Double.parseDouble(disp);
                     operator = "-";
                     lastPress = "-";
 
@@ -455,7 +447,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void multiply(View v) {
         op = "*";
-        if ((Display.getText() + "").equals("") || (Display.getText() + "").equals(".")) {
+        String disp = Display.getText().toString();
+        if (disp.contains("x10^")) {
+            disp = disp.replace("x10^", "E");
+        }
+        if ((Display.getText() + "").equals("") || (Display.getText() + "").equals(".") || disp.equals("∞")) {
             ;
         } else if (lastPress == "+" || lastPress == "-" || lastPress == "*" || lastPress == "/") {
             switch (op) {
@@ -479,42 +475,27 @@ public class MainActivity extends AppCompatActivity {
             vibrate(25);
         } else {
             if (operator.equals("+")) {
-                if (realresult != null)
-                    a += round((realresult), 12);
-                else
-                a += Double.parseDouble(Display.getText() + "");
+                a += Double.parseDouble(disp);
                 operator = "*";
                 lastPress = "*";
 
             } else if (operator.equals("-")) {
-                if (realresult != null)
-                    a -= round((realresult), 12);
-                else
-                a -= Double.parseDouble(Display.getText() + "");
+                a -= Double.parseDouble(disp);
                 operator = "*";
 
                 lastPress = "*";
             } else if (operator.equals("*")) {
-                if (realresult != null)
-                    a *= round((realresult), 12);
-                else
-                a *= Double.parseDouble(Display.getText() + "");
+                a *= Double.parseDouble(disp);
                 operator = "*";
                 lastPress = "*";
 
             } else if (operator.equals("/")) {
-                if (realresult != null)
-                    a /= round((realresult), 12);
-                else
-                a /= Double.parseDouble(Display.getText() + "");
+                a /= Double.parseDouble(disp);
                 operator = "*";
                 lastPress = "*";
 
             } else {
-                if (realresult != null)
-                    a = round((realresult), 12);
-                else
-                a = Double.parseDouble(Display.getText() + "");
+                a = Double.parseDouble(disp);
                 operator = "*";
                 lastPress = "*";
 
@@ -527,7 +508,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void divide(View v) {
         op = "/";
-        if ((Display.getText() + "").equals("") || (Display.getText() + "").equals(".")) {
+        String disp = Display.getText().toString();
+        if (disp.contains("x10^")) {
+            disp = disp.replace("x10^", "E");
+        }
+        if ((Display.getText() + "").equals("") || (Display.getText() + "").equals(".") || disp.equals("∞")) {
             ;
         } else if (lastPress == "+" || lastPress == "-" || lastPress == "*" || lastPress == "/") {
             switch (op) {
@@ -551,40 +536,25 @@ public class MainActivity extends AppCompatActivity {
             vibrate(25);
         } else {
             if (operator.equals("+")) {
-                if (realresult != null)
-                    a += round((realresult), 12);
-                else
-                a += Double.parseDouble(Display.getText() + "");
+                a += Double.parseDouble(disp);
                 operator = "/";
                 lastPress = "/";
             } else if (operator.equals("-")) {
-                if (realresult != null)
-                    a -= round((realresult), 12);
-                else
-                a -= Double.parseDouble(Display.getText() + "");
+                a -= Double.parseDouble(disp);
                 operator = "/";
                 lastPress = "/";
             } else if (operator.equals("*")) {
-                if (realresult != null)
-                    a *= round((realresult), 12);
-                else
-                a *= Double.parseDouble(Display.getText() + "");
+                a *= Double.parseDouble(disp);
                 operator = "/";
                 lastPress = "/";
 
             } else if (operator.equals("/")) {
-                if (realresult != null)
-                    a /= round((realresult), 12);
-                else
-                a /= Double.parseDouble(Display.getText() + "");
+                a /= Double.parseDouble(disp);
                 operator = "/";
                 lastPress = "/";
 
             } else {
-                if (realresult != null)
-                    a = round((realresult), 12);
-                else
-                    a = Double.parseDouble(Display.getText() + "");
+                a = Double.parseDouble(disp);
                 operator = "/";
                 lastPress = "/";
 
@@ -600,21 +570,27 @@ public class MainActivity extends AppCompatActivity {
         switch (operator) {
             case "+": {
                 try {
-                    Display.setText(Double.parseDouble(Display.getText() + "") + a + "");
+                    a += Double.parseDouble(Display.getText() + "");
+                    Display.setText(numberFormat.format(a));
+
                 } catch (Exception e) {
                 }
                 break;
             }
             case "-": {
                 try {
-                    Display.setText(a - Double.parseDouble(Display.getText() + "") + "");
+                    a -= Double.parseDouble(Display.getText() + "");
+                    Display.setText(numberFormat.format(a));
+                    //Display.setText(numberFormat.format(a - Double.parseDouble(Display.getText() + "")) + "");
                 } catch (Exception e) {
                 }
                 break;
             }
             case "*": {
                 try {
-                    Display.setText(a * Double.parseDouble(Display.getText() + "") + "");
+                    a *= Double.parseDouble(Display.getText() + "");
+                    Display.setText(numberFormat.format(a));
+                    //Display.setText(numberFormat.format(a * Double.parseDouble(Display.getText() + "")) + "");
                 } catch (Exception e) {
                 }
                 break;
@@ -622,12 +598,15 @@ public class MainActivity extends AppCompatActivity {
             }
             case "/": {
                 try {
-                    Display.setText(a / Double.parseDouble(Display.getText() + "") + "");
+                    a /= Double.parseDouble(Display.getText() + "");
+                    Display.setText(numberFormat.format(a));
+                    //Display.setText(numberFormat.format(a / Double.parseDouble(Display.getText() + "")) + "");
                 } catch (Exception e) {
                 }
                 break;
             }
         }
+        realResult = a + "";
         correctExponent();
         vibrate(25);
         a = 0;
@@ -638,7 +617,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void correctExponent() {
         String result = Display.getText().toString();
-        realresult=result;
 
         int length;
         double number;
@@ -650,15 +628,15 @@ public class MainActivity extends AppCompatActivity {
                 number = Double.parseDouble(result.substring(0, 12));
                 Display.setText(number + "x10^" + result.substring(result.indexOf("E") + 1));
             } else {
-
                 Display.setText(result.replace("E", "x10^"));
             }
 
 
-        } else if (result.contains(".")) {
+        } else if (result.contains(".") && result.length() < Double.SIZE) {
 
-            if (result.length()>10)
-                result=round(result,4)+"";
+
+            if (result.length() > 10)
+                result = round(result, 4) + "";
 
             try {
                 if (Integer.parseInt(result.substring(result.indexOf(".") + 1)) == 0) {
@@ -666,29 +644,65 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
-            }catch (NumberFormatException nfe){
-                        Display.setText(result);
+            } catch (NumberFormatException nfe) {
+                Display.setText(result);
+                correctExponent();
             }
 
 
+        } else if (result.contains(".")) {
+
+            try {
+                result = round(result, 8) + "";
+                Display.setText(result);
+                correctExponent();
+            } catch (NumberFormatException nfe) {
+                Log.e("Number Format Wrong", nfe.getMessage());
+            }
+
+        } else {
+            if (realResult != null) {
+
+                if (realResult.length() > 10) {
+                    Display.setText(realResult.charAt(0) + realResult.substring(1, 6) + "x10^" + realResult.substring(realResult.indexOf("E") + 1));
+
+                } else if (realResult.length() <= 10 && result.length() <= 10) {
+
+                } else {
+                    Display.setText("∞");
+                    a = Double.POSITIVE_INFINITY;
+                    realResult = "∞";
+                }
+            } else {
+                Display.setText(result);
+                if (!corrected) {
+                    corrected = true;
+                    correctExponent();
+                }
+            }
         }
 
     }
 
-    public static double round(double value, int places) {
+    public BigDecimal round2(String value, int places) {
         if (places < 0) throw new IllegalArgumentException();
 
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.doubleValue();
+        return bd;
     }
 
-    public static double round(String value, int places) {
+    public double round(String value, int places) {
         if (places < 0) throw new IllegalArgumentException();
 
-        BigDecimal bd = new BigDecimal(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.doubleValue();
+        try {
+            BigDecimal bd = new BigDecimal(value);
+            bd = bd.setScale(places, RoundingMode.HALF_UP);
+            return bd.doubleValue();
+        } catch (NumberFormatException e) {
+            clearAll();
+            return 0;
+        }
     }
 
     public void decimal(View v) {
@@ -702,7 +716,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void clearAll() {
         Display.setText("");
-        display_op.setText("");
     }
 
     public void back(View v) {
@@ -726,65 +739,114 @@ public class MainActivity extends AppCompatActivity {
     double A = 0, B = 0;
 
     public void storeA(View v) {
+
+        if (sp.getBoolean("FIRST_START",true)) {
+            alertHelp();
+        }
         if (!longClickA) {
             memoryCleared = A == 0 && B == 0;
             if (memoryCleared || A == 0) {
-                if (!Display.getText().toString().isEmpty()) {
-                    A = Double.parseDouble(Display.getText() + "");
+                if (!Display.getText().toString().isEmpty() && !Display.getText().toString().equals("∞")) {
+
+                    String disp = Display.getText().toString();
+                    if (disp.contains("x10^")) {
+                        disp = disp.replace("x10^", "E");
+                    }
+                    A = Double.parseDouble(disp);
                     vibrate(100);
-                    toast.setText("Value stored in A");
+                    toast.setText("Value stored in A, Long press A to clear value");
                     toast.show();
                     lastPress = "A";
-                } else {
-                    ;
                 }
             } else {
-                clearAll();
                 vibrate(25);
                 Display.setText(A + "");
                 A_On = false;
+                correctExponent();
             }
-        } else
-            ;
+        }
 
         longClickA = false;
 
     }
 
     public void storeB(View v) {
+        if (sp.getBoolean("FIRST_START",true)) {
+            alertHelp();
+        }
         if (longClickB == false) {
             if (A == 0 && B == 0)
                 memoryCleared = true;
             else if (A != 0 || B != 0)
                 memoryCleared = false;
             if (memoryCleared || B == 0) {
-                if (Display.getText().toString().isEmpty())
-                    ;
-                else {
-                    B = Double.parseDouble(Display.getText() + "");
+                if (!Display.getText().toString().isEmpty() && !Display.getText().toString().equals("∞")) {
+
+                    String disp = Display.getText().toString();
+                    if (disp.contains("x10^")) {
+                        disp = disp.replace("x10^", "E");
+                    }
+                    B = Double.parseDouble(disp);
                     memoryCleared = false;
                     vibrate(100);
-                    toast.setText("Value stored in B");
+                    toast.setText("Value stored in B, Long press B to clear value");
                     toast.show();
                     lastPress = "B";
                 }
             } else {
-                clearAll();
                 vibrate(25);
                 Display.setText(B + "");
                 B_On = false;
+                correctExponent();
             }
-        } else
-            ;
+        }
 
         longClickB = false;
+
+    }
+
+    private void alertHelp() {
+
+        View checkBoxView = View.inflate(this, R.layout.dialog_check_box, null);
+        CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.checkbox);
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                // Save to shared preferences
+                if (isChecked) {
+                    SharedPreferences.Editor edit = sp.edit();
+                    edit.putBoolean("FIRST_START", false);
+                    edit.apply();
+                } else {
+                    SharedPreferences.Editor edit = sp.edit();
+                    edit.putBoolean("FIRST_START", true);
+                    edit.apply();
+                }
+            }
+        });
+        checkBox.setText("Got it");
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Hint");
+        builder.setMessage("Tap on A or B to store the displayed value in memory. Long press to clear individual memory or long press on ← to clear both")
+                .setView(checkBoxView)
+                .setCancelable(false)
+                .setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                }).show();
+
     }
 
     public void clear(View v) {
         clearAll();
         vibrate(50);
         a = 0;
-        realresult = null;
+        realResult = null;
+        display_op.setText("");
     }
 
 
@@ -818,8 +880,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-
-
         super.onPause();
 
     }
@@ -840,6 +900,8 @@ public class MainActivity extends AppCompatActivity {
         outState.putString("OPERATOR", display_op.getText().toString());
         outState.putString("PREVIOUS_VALUE", Display.getText().toString());
         outState.putDouble("PREVIOUS_RESULT", a);
+        outState.putDouble("MEMORY_A", A);
+        outState.putDouble("MEMORY_B", B);
 
 
         super.onSaveInstanceState(outState, outPersistentState);
