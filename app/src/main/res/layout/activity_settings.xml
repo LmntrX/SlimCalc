@@ -1,0 +1,26 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:id="@+id/container"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    tools:context="com.lmntrx.slimcalc.SettingsActivity" tools:ignore="MergeRootFrame"
+    android:background="@drawable/slimcalc_bg">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="left|top">
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="50sp"
+            android:id="@+id/vibrate_cb"
+            android:text="Vibrate on Touch"
+            android:textSize="35sp"/>
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="50sp"
+            android:id="@+id/theme_cb"
+            android:text="Dark Theme"
+            android:onClick="showMessage"
+            android:textSize="35sp"/>
+    </LinearLayout>
+</FrameLayout>
