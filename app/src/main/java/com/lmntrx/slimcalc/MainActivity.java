@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
         mVibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
-        toast = Toast.makeText(this,"", Toast.LENGTH_SHORT);
+        toast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
 
         btn1 = (Button) findViewById(R.id.btn1);
         btn2 = (Button) findViewById(R.id.btn2);
@@ -331,39 +331,51 @@ public class MainActivity extends AppCompatActivity {
                     operator = "/";
                     break;
             }
+            display_op.setText("+");
             vibrate(25);
         } else {
-            if (operator.equals("+")) {
-                a += Double.parseDouble(disp);
-                operator = "+";
-                lastPress = "+";
+            try {
+                switch (operator) {
+                    case "+":
+                        a += Double.parseDouble(disp);
+                        operator = "+";
+                        lastPress = "+";
 
-            } else if (operator.equals("-")) {
-                a -= Double.parseDouble(disp);
-                operator = "+";
-                lastPress = "+";
+                        break;
+                    case "-":
+                        a -= Double.parseDouble(disp);
+                        operator = "+";
+                        lastPress = "+";
 
-            } else if (operator.equals("*")) {
-                a *= Double.parseDouble(disp);
-                operator = "+";
-                lastPress = "+";
+                        break;
+                    case "*":
+                        a *= Double.parseDouble(disp);
+                        operator = "+";
+                        lastPress = "+";
 
-            } else if (operator.equals("/")) {
-                a /= Double.parseDouble(disp);
-                operator = "+";
-                lastPress = "+";
+                        break;
+                    case "/":
+                        a /= Double.parseDouble(disp);
+                        operator = "+";
+                        lastPress = "+";
 
-            } else {
-                a = Double.parseDouble(disp);
-                operator = "+";
-                lastPress = "+";
+                        break;
+                    default:
+                        a = Double.parseDouble(disp);
+                        operator = "+";
+                        lastPress = "+";
 
+                        break;
+                }
+                vibrate(25);
+                display_op.setText("+");
+            } catch (NumberFormatException nfe) {
+
+                Log.e("Number Format Wrong", nfe.getMessage());
             }
-            vibrate(25);
+
         }
 
-
-        display_op.setText("+");
 
     }
 
@@ -397,38 +409,45 @@ public class MainActivity extends AppCompatActivity {
                         operator = "/";
                         break;
                 }
+                display_op.setText("-");
                 vibrate(25);
             } else {
-                if (operator.equals("+")) {
-                    a += Double.parseDouble(disp);
-                    operator = "-";
-                    lastPress = "-";
+                try {
+                    if (operator.equals("+")) {
+                        a += Double.parseDouble(disp);
+                        operator = "-";
+                        lastPress = "-";
 
-                } else if (operator.equals("-")) {
-                    a -= Double.parseDouble(disp);
-                    operator = "-";
-                    lastPress = "-";
+                    } else if (operator.equals("-")) {
+                        a -= Double.parseDouble(disp);
+                        operator = "-";
+                        lastPress = "-";
 
-                } else if (operator.equals("*")) {
-                    a *= Double.parseDouble(disp);
-                    operator = "-";
-                    lastPress = "-";
+                    } else if (operator.equals("*")) {
+                        a *= Double.parseDouble(disp);
+                        operator = "-";
+                        lastPress = "-";
 
-                } else if (operator.equals("/")) {
-                    a /= Double.parseDouble(disp);
-                    operator = "-";
-                    lastPress = "-";
+                    } else if (operator.equals("/")) {
+                        a /= Double.parseDouble(disp);
+                        operator = "-";
+                        lastPress = "-";
 
-                } else {
-                    a = Double.parseDouble(disp);
-                    operator = "-";
-                    lastPress = "-";
+                    } else {
+                        a = Double.parseDouble(disp);
+                        operator = "-";
+                        lastPress = "-";
+
+                    }
+                    vibrate(25);
+                    display_op.setText("-");
+                } catch (NumberFormatException nfe) {
+                    Log.e("Number Format Wrong", nfe.getMessage());
 
                 }
-                vibrate(25);
+
             }
 
-            display_op.setText("-");
         }
 
     }
@@ -472,38 +491,50 @@ public class MainActivity extends AppCompatActivity {
                     operator = "/";
                     break;
             }
+            display_op.setText("x");
             vibrate(25);
         } else {
-            if (operator.equals("+")) {
-                a += Double.parseDouble(disp);
-                operator = "*";
-                lastPress = "*";
+            try {
 
-            } else if (operator.equals("-")) {
-                a -= Double.parseDouble(disp);
-                operator = "*";
+                switch (operator) {
+                    case "+":
+                        a += Double.parseDouble(disp);
+                        operator = "*";
+                        lastPress = "*";
 
-                lastPress = "*";
-            } else if (operator.equals("*")) {
-                a *= Double.parseDouble(disp);
-                operator = "*";
-                lastPress = "*";
+                        break;
+                    case "-":
+                        a -= Double.parseDouble(disp);
+                        operator = "*";
 
-            } else if (operator.equals("/")) {
-                a /= Double.parseDouble(disp);
-                operator = "*";
-                lastPress = "*";
+                        lastPress = "*";
+                        break;
+                    case "*":
+                        a *= Double.parseDouble(disp);
+                        operator = "*";
+                        lastPress = "*";
 
-            } else {
-                a = Double.parseDouble(disp);
-                operator = "*";
-                lastPress = "*";
+                        break;
+                    case "/":
+                        a /= Double.parseDouble(disp);
+                        operator = "*";
+                        lastPress = "*";
 
+                        break;
+                    default:
+                        a = Double.parseDouble(disp);
+                        operator = "*";
+                        lastPress = "*";
+
+                        break;
+                }
+                vibrate(25);
+                display_op.setText("x");
+            } catch (NumberFormatException nfe) {
+                Log.e("Number Format Wrong", nfe.getMessage());
             }
-            vibrate(25);
         }
 
-        display_op.setText("x");
     }
 
     public void divide(View v) {
@@ -533,37 +564,50 @@ public class MainActivity extends AppCompatActivity {
                     operator = "/";
                     break;
             }
+            display_op.setText("÷");
             vibrate(25);
         } else {
-            if (operator.equals("+")) {
-                a += Double.parseDouble(disp);
-                operator = "/";
-                lastPress = "/";
-            } else if (operator.equals("-")) {
-                a -= Double.parseDouble(disp);
-                operator = "/";
-                lastPress = "/";
-            } else if (operator.equals("*")) {
-                a *= Double.parseDouble(disp);
-                operator = "/";
-                lastPress = "/";
+            try {
+                switch (operator) {
+                    case "+":
+                        a += Double.parseDouble(disp);
+                        operator = "/";
+                        lastPress = "/";
+                        break;
+                    case "-":
+                        a -= Double.parseDouble(disp);
+                        operator = "/";
+                        lastPress = "/";
+                        break;
+                    case "*":
+                        a *= Double.parseDouble(disp);
+                        operator = "/";
+                        lastPress = "/";
 
-            } else if (operator.equals("/")) {
-                a /= Double.parseDouble(disp);
-                operator = "/";
-                lastPress = "/";
+                        break;
+                    case "/":
+                        a /= Double.parseDouble(disp);
+                        operator = "/";
+                        lastPress = "/";
 
-            } else {
-                a = Double.parseDouble(disp);
-                operator = "/";
-                lastPress = "/";
+                        break;
+                    default:
+                        a = Double.parseDouble(disp);
+                        operator = "/";
+                        lastPress = "/";
 
+                        break;
+                }
+                vibrate(25);
+                display_op.setText("÷");
+            } catch (NumberFormatException nfe) {
+                Log.e("Number Format Wrong", nfe.getMessage());
             }
-            vibrate(25);
+
+
         }
 
 
-        display_op.setText("÷");
     }
 
     public void equal(View v) {
@@ -572,7 +616,8 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     a += Double.parseDouble(Display.getText() + "");
                     Display.setText(numberFormat.format(a));
-
+                    realResult = a + "";
+                    correctExponent();
                 } catch (Exception e) {
                 }
                 break;
@@ -581,7 +626,9 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     a -= Double.parseDouble(Display.getText() + "");
                     Display.setText(numberFormat.format(a));
-                    //Display.setText(numberFormat.format(a - Double.parseDouble(Display.getText() + "")) + "");
+
+                    realResult = a + "";
+                    correctExponent();
                 } catch (Exception e) {
                 }
                 break;
@@ -590,7 +637,9 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     a *= Double.parseDouble(Display.getText() + "");
                     Display.setText(numberFormat.format(a));
-                    //Display.setText(numberFormat.format(a * Double.parseDouble(Display.getText() + "")) + "");
+
+                    realResult = a + "";
+                    correctExponent();
                 } catch (Exception e) {
                 }
                 break;
@@ -600,14 +649,15 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     a /= Double.parseDouble(Display.getText() + "");
                     Display.setText(numberFormat.format(a));
-                    //Display.setText(numberFormat.format(a / Double.parseDouble(Display.getText() + "")) + "");
+                    realResult = a + "";
+                    correctExponent();
                 } catch (Exception e) {
                 }
                 break;
             }
+            default: {
+            }
         }
-        realResult = a + "";
-        correctExponent();
         vibrate(25);
         a = 0;
         lastPress = "=";
@@ -667,7 +717,10 @@ public class MainActivity extends AppCompatActivity {
                     Display.setText(realResult.charAt(0) + realResult.substring(1, 6) + "x10^" + realResult.substring(realResult.indexOf("E") + 1));
 
                 } else if (realResult.length() <= 10 && result.length() <= 10) {
-
+                    Display.setText(result);
+                } else if (realResult.contains("x10^") || realResult.contains("E")) {
+                    result = round(realResult, 8) + "";
+                    Display.setText(result.substring(0, realResult.indexOf("E")) + "x10^" + result.substring(realResult.indexOf("E") + 1));
                 } else {
                     Display.setText("∞");
                     a = Double.POSITIVE_INFINITY;
@@ -681,6 +734,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+
+        Log.e("Correction", "Done");
 
     }
 
@@ -740,68 +795,79 @@ public class MainActivity extends AppCompatActivity {
 
     public void storeA(View v) {
 
-        if (sp.getBoolean("FIRST_START",true)) {
+        if (sp.getBoolean("FIRST_START", true)) {
             alertHelp();
         }
-        if (!longClickA) {
-            memoryCleared = A == 0 && B == 0;
-            if (memoryCleared || A == 0) {
-                if (!Display.getText().toString().isEmpty() && !Display.getText().toString().equals("∞")) {
+        try {
 
-                    String disp = Display.getText().toString();
-                    if (disp.contains("x10^")) {
-                        disp = disp.replace("x10^", "E");
+            if (!longClickA) {
+                memoryCleared = A == 0 && B == 0;
+                if (memoryCleared || A == 0) {
+                    if (!Display.getText().toString().isEmpty() && !Display.getText().toString().equals("∞")) {
+
+                        String disp = Display.getText().toString();
+                        if (disp.contains("x10^")) {
+                            disp = disp.replace("x10^", "E");
+                        }
+                        A = Double.parseDouble(disp);
+                        vibrate(100);
+                        toast.setText("Value stored in A, Long press A to clear value");
+                        toast.show();
+                        lastPress = "A";
                     }
-                    A = Double.parseDouble(disp);
-                    vibrate(100);
-                    toast.setText("Value stored in A, Long press A to clear value");
-                    toast.show();
-                    lastPress = "A";
+                } else {
+                    vibrate(25);
+                    Display.setText(A + "");
+                    A_On = false;
+                    correctExponent();
                 }
-            } else {
-                vibrate(25);
-                Display.setText(A + "");
-                A_On = false;
-                correctExponent();
             }
+
+            longClickA = false;
+
+        } catch (NumberFormatException nfe) {
+            Log.e("Number Format Wrong", nfe.getMessage());
         }
-
-        longClickA = false;
-
     }
 
     public void storeB(View v) {
-        if (sp.getBoolean("FIRST_START",true)) {
+        if (sp.getBoolean("FIRST_START", true)) {
             alertHelp();
         }
-        if (longClickB == false) {
-            if (A == 0 && B == 0)
-                memoryCleared = true;
-            else if (A != 0 || B != 0)
-                memoryCleared = false;
-            if (memoryCleared || B == 0) {
-                if (!Display.getText().toString().isEmpty() && !Display.getText().toString().equals("∞")) {
-
-                    String disp = Display.getText().toString();
-                    if (disp.contains("x10^")) {
-                        disp = disp.replace("x10^", "E");
-                    }
-                    B = Double.parseDouble(disp);
+        try {
+            if (!longClickB) {
+                if (A == 0 && B == 0)
+                    memoryCleared = true;
+                else if (A != 0 || B != 0)
                     memoryCleared = false;
-                    vibrate(100);
-                    toast.setText("Value stored in B, Long press B to clear value");
-                    toast.show();
-                    lastPress = "B";
+                if (memoryCleared || B == 0) {
+                    if (!Display.getText().toString().isEmpty() && !Display.getText().toString().equals("∞")) {
+
+                        String disp = Display.getText().toString();
+                        if (disp.contains("x10^")) {
+                            disp = disp.replace("x10^", "E");
+                        }
+
+                        B = Double.parseDouble(disp);
+                        memoryCleared = false;
+                        vibrate(100);
+                        toast.setText("Value stored in B, Long press B to clear value");
+                        toast.show();
+                        lastPress = "B";
+                    }
+                } else {
+                    vibrate(25);
+                    Display.setText(B + "");
+                    B_On = false;
+                    correctExponent();
                 }
-            } else {
-                vibrate(25);
-                Display.setText(B + "");
-                B_On = false;
-                correctExponent();
             }
+
+            longClickB = false;
+        } catch (NumberFormatException nfe) {
+            Log.e("Number Format Exception", nfe.getMessage());
         }
 
-        longClickB = false;
 
     }
 
@@ -830,7 +896,7 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Hint");
-        builder.setMessage("Tap on A or B to store the displayed value in memory. Long press to clear individual memory or long press on ← to clear both")
+        builder.setMessage("Tap on A or B to store the displayed value in memory. \nLong press to clear individual memory or long press on ← to clear both")
                 .setView(checkBoxView)
                 .setCancelable(false)
                 .setPositiveButton("Done", new DialogInterface.OnClickListener() {

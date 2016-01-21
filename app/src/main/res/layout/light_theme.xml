@@ -18,17 +18,13 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/display"
 
-            android:hint="0"
-            android:autoText="false"
+            android:hint="@string/display_hint"
             android:gravity="right"
             android:textAlignment="gravity"
-            android:textSize="30dp"
-            android:phoneNumber="false"
+            android:textSize="30sp"
             android:outlineProvider="background"
-            android:editable="true"
             android:maxLength="20"
             android:maxLines="1"
-            android:numeric="decimal"
             android:textColor="#000000"
             android:textColorHint="#000000" />
 
@@ -37,12 +33,10 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:id="@+id/displayOpr"
-            android:autoText="false"
             android:gravity="right"
             android:textAlignment="gravity"
-            android:textSize="30dp"
+            android:textSize="30sp"
             android:outlineProvider="background"
-            android:editable="true"
             android:maxLength="2"
             android:maxLines="1"
             android:textColor="#807c7c"/>
